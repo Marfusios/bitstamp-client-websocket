@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Bitstamp.Client.Websocket</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Mariusz Kotas</Authors>
+    <Description>Client for Bitstamp Pro websocket API</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <Copyright>Copyright 2020 Mariusz Kotas. All rights reserved.</Copyright>
+    <PackageTags>Bitstamp Pro websockets websocket client cryptocurrency exchange bitcoin</PackageTags>
+    <PackageLicenseUrl>https://github.com/Marfusios/Bitstamp-client-websocket/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Marfusios/Bitstamp-client-websocket</PackageProjectUrl>
+    <PackageIconUrl>https://pbs.twimg.com/profile_images/866625488059600896/cuNpnAQe_400x400.jpg</PackageIconUrl>
+    <RepositoryUrl>https://github.com/Marfusios/bitstamp-client-websocket</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile> 
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibLog" Version="5.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.Reactive" Version="4.4.1" />
+    <PackageReference Include="Websocket.Client" Version="4.3.15" />
+  </ItemGroup>
+</Project>

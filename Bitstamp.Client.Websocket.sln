@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{360B18BD-653A-4824-9261-C88167EEBAD2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0544BC01-B569-4729-86B0-5AFDBF7EED46}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test_integration", "test_integration", "{42E4078C-4FBE-4B03-B889-1573332945A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B771F515-0677-409B-BEC1-B84BC88E7392}"
+	ProjectSection(SolutionItems) = preProject
+		.travis.yml = .travis.yml
+		bitstamp-logo.png = bitstamp-logo.png
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitstamp.Client.Websocket", "src\Bitstamp.Client.Websocket\Bitstamp.Client.Websocket.csproj", "{180C8E55-3813-4AC3-B3B7-A29FF84B79C9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitstamp.Client.Websocket.Tests", "test\Bitstamp.Client.Websocket.Tests\Bitstamp.Client.Websocket.Tests.csproj", "{84C727C4-462F-4D87-A76D-D804ED9C08FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitstamp.Client.Websocket.Tests.Integration", "test_integration\Bitstamp.Client.Websocket.Tests.Integration\Bitstamp.Client.Websocket.Tests.Integration.csproj", "{EAE8FA8B-3E7A-4142-9EF4-3AB6C62E3107}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitstamp.Client.Websocket.Sample", "test_integration\Bitstamp.Client.Websocket.Sample\Bitstamp.Client.Websocket.Sample.csproj", "{E5289496-1587-46E7-8EE8-0BEDACEEA901}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{180C8E55-3813-4AC3-B3B7-A29FF84B79C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{180C8E55-3813-4AC3-B3B7-A29FF84B79C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{180C8E55-3813-4AC3-B3B7-A29FF84B79C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{180C8E55-3813-4AC3-B3B7-A29FF84B79C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84C727C4-462F-4D87-A76D-D804ED9C08FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84C727C4-462F-4D87-A76D-D804ED9C08FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84C727C4-462F-4D87-A76D-D804ED9C08FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84C727C4-462F-4D87-A76D-D804ED9C08FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAE8FA8B-3E7A-4142-9EF4-3AB6C62E3107}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAE8FA8B-3E7A-4142-9EF4-3AB6C62E3107}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAE8FA8B-3E7A-4142-9EF4-3AB6C62E3107}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAE8FA8B-3E7A-4142-9EF4-3AB6C62E3107}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5289496-1587-46E7-8EE8-0BEDACEEA901}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5289496-1587-46E7-8EE8-0BEDACEEA901}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5289496-1587-46E7-8EE8-0BEDACEEA901}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5289496-1587-46E7-8EE8-0BEDACEEA901}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{180C8E55-3813-4AC3-B3B7-A29FF84B79C9} = {360B18BD-653A-4824-9261-C88167EEBAD2}
+		{84C727C4-462F-4D87-A76D-D804ED9C08FB} = {0544BC01-B569-4729-86B0-5AFDBF7EED46}
+		{EAE8FA8B-3E7A-4142-9EF4-3AB6C62E3107} = {42E4078C-4FBE-4B03-B889-1573332945A9}
+		{E5289496-1587-46E7-8EE8-0BEDACEEA901} = {42E4078C-4FBE-4B03-B889-1573332945A9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EE3E0B94-CF20-4C22-B50B-E720E8DFD675}
+	EndGlobalSection
+EndGlobal
