@@ -1,7 +1,6 @@
-﻿namespace Bitstamp.Client.Websocket.Messages
+﻿namespace Bitstamp.Client.Websocket.Messages;
+
+public class MessageBase
 {
-    public class MessageBase
-    {
-        public virtual MessageType Event { get; set; }
-    }
+    public EventType Event { get; set; }
 }

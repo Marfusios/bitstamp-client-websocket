@@ -1,136 +1,107 @@
 ﻿using System;
-using Bitstamp.Client.Websocket.Communicator;
 using Bitstamp.Client.Websocket.Json;
-using Bitstamp.Client.Websocket.Logging;
 using Bitstamp.Client.Websocket.Requests;
 using Bitstamp.Client.Websocket.Responses;
 using Bitstamp.Client.Websocket.Responses.Books;
+using Bitstamp.Client.Websocket.Responses.Error;
 using Bitstamp.Client.Websocket.Responses.Orders;
-using Bitstamp.Client.Websocket.Validations;
+using Bitstamp.Client.Websocket.Responses.Trades;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Websocket.Client;
 
-namespace Bitstamp.Client.Websocket.Client
+namespace Bitstamp.Client.Websocket.Client;
+
+/// <inheritdoc />
+public class BitstampWebsocketClient : IBitstampWebsocketClient
 {
+    readonly ILogger _logger;
+    readonly IWebsocketClient _client;
+    readonly IDisposable _messageReceivedSubscription;
+
     /// <summary>
-    /// Bitstamp websocket client.
-    /// Use method `Send()` to subscribe to channels.
-    /// And `Streams` to handle messages.
+    /// Creates a new instance.
     /// </summary>
-    public class BitstampWebsocketClient : IDisposable
+    /// <param name="logger">The logger to use for logging any warnings or errors.</param>
+    /// <param name="client">The client to use for the trade websocket.</param>
+    public BitstampWebsocketClient(ILogger logger, IWebsocketClient client)
     {
-        private static readonly ILog Log = LogProvider.GetCurrentClassLogger();
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _client = client ?? throw new ArgumentNullException(nameof(client));
 
-        private readonly IBitstampCommunicator _communicator;
-        private readonly IDisposable _messageReceivedSubscription;
+        _messageReceivedSubscription = _client.MessageReceived.Subscribe(HandleMessage);
+    }
 
-        /// <summary>
-        /// Bitstamp websocket client.
-        /// Use method `Send()` to subscribe to channels.
-        /// And `Streams` to handle messages.
-        /// </summary>
-        /// <param name="communicator">Live or backtest communicator</param>
-        public BitstampWebsocketClient(IBitstampCommunicator communicator)
+    /// <inheritdoc />
+    public BitstampClientStreams Streams { get; } = new();
+
+    /// <summary>
+    /// Cleanup everything.
+    /// </summary>
+    public void Dispose() => _messageReceivedSubscription?.Dispose();
+
+    /// <inheritdoc />
+    public void Send<T>(T request) where T : RequestBase
+    {
+        if (request == null) throw new ArgumentNullException(nameof(request));
+
+        try
         {
-            BitstampValidations.ValidateInput(communicator, nameof(communicator));
+            var serialized = BitstampJsonSerializer.Serialize(request);
 
-            _communicator = communicator;
-            _messageReceivedSubscription = _communicator.MessageReceived.Subscribe(HandleMessage);
+            _client.Send(serialized);
         }
-
-        /// <summary>
-        /// Provided message streams
-        /// </summary>
-        public BitstampClientStreams Streams { get; } = new BitstampClientStreams();
-
-        /// <summary>
-        /// Cleanup everything
-        /// </summary>
-        public void Dispose()
+        catch (Exception e)
         {
-            _messageReceivedSubscription?.Dispose();
+            _logger.LogError(e, LogMessage($"Exception while sending message '{request}'. Error: {e.Message}"));
+            throw;
         }
+    }
 
-        /// <summary>
-        /// Serializes request and sends message via websocket communicator.
-        /// It logs and re-throws every exception.
-        /// </summary>
-        /// <param name="request">Request/message to be sent</param>
-        public void Send<T>(T request) where T : RequestBase
+    static string LogMessage(string message) => $"[BITSTAMP WEBSOCKET CLIENT] {message}";
+
+    void HandleMessage(ResponseMessage message)
+    {
+        try
         {
-            try
+            bool handled;
+            var messageSafe = (message.Text ?? string.Empty).Trim();
+
+            if (messageSafe.StartsWith("{"))
             {
-                BitstampValidations.ValidateInput(request, nameof(request));
-
-                var serialized =
-                    BitstampJsonSerializer.Serialize(request);
-
-                _communicator.Send(serialized);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, L($"Exception while sending message '{request}'. Error: {e.Message}"));
-                throw;
-            }
-        }
-
-        private string L(string msg)
-        {
-            return $"[BITSTAMP WEBSOCKET CLIENT] {msg}";
-        }
-
-        private void HandleMessage(ResponseMessage message)
-        {
-            try
-            {
-                bool handled;
-                var messageSafe = (message.Text ?? string.Empty).Trim();
-
-                if (messageSafe.StartsWith("{"))
-                {
-                    handled = HandleObjectMessage(messageSafe);
-                    if (handled) return;
-                }
-
-                handled = HandleRawMessage(messageSafe);
+                handled = HandleObjectMessage(messageSafe);
                 if (handled) return;
-
-                Log.Warn(L($"Unhandled response:  '{messageSafe}'"));
             }
-            catch (Exception e)
-            {
-                Log.Error(e, L("Exception while receiving message"));
-            }
-        }
 
-        private bool HandleRawMessage(string msg)
+            handled = HandleRawMessage(messageSafe);
+            if (handled) return;
+
+            _logger.LogWarning(LogMessage($"Unhandled response:  '{messageSafe}'"));
+        }
+        catch (Exception e)
         {
-            // ********************
-            // ADD RAW HANDLERS BELOW
-            // ********************
-
-            return false;
+            _logger.LogError(e, LogMessage("Exception while receiving message"));
         }
+    }
 
-        private bool HandleObjectMessage(string msg)
-        {
-            var response = BitstampJsonSerializer.Deserialize<JObject>(msg);
+    static bool HandleRawMessage(string message) => false;
 
-            // ********************
-            // ADD OBJECT HANDLERS BELOW
-            // ********************
+    bool HandleObjectMessage(string message)
+    {
+        var response = BitstampJsonSerializer.Deserialize<JObject>(message);
 
-            return
-                SubscriptionSucceeded.TryHandle(response, Streams.SubscriptionSucceededSubject) ||
-                UnsubscriptionSucceeded.TryHandle(response, Streams.UnsubscriptionSucceededSubject) ||
-                //OrderBookSnapshotResponse.TryHandle(response, Streams.OrderBookSnapshotSubject) ||
-                Ticker.TryHandle(response, Streams.TickerSubject) ||
-                OrderBookResponse.TryHandle(response, Streams.OrderBookSubject) ||
-                OrderBookDetailResponse.TryHandle(response, Streams.OrderBookDetailSubject) ||
-                OrderBookDiffResponse.TryHandle(response, Streams.OrderBookDiffSubject) ||
-                ErrorResponse.TryHandle(response, Streams.ErrorSubject) ||
-                OrderResponse.TryHandle(response, Streams.OrdersSubject) ||
-                false;
-        }
+        return
+            SubscriptionSucceeded.TryHandle(response, Streams.SubscriptionSucceededStream) ||
+            UnsubscriptionSucceeded.TryHandle(response, Streams.UnsubscriptionSucceededStream) ||
+            TradeResponse.TryHandle(response, Streams.TickerStream) ||
+            OrderBookResponse.TryHandle(response, Streams.OrderBookStream) ||
+            OrderBookDetailResponse.TryHandle(response, Streams.OrderBookDetailStream) ||
+            OrderBookDiffResponse.TryHandle(response, Streams.OrderBookDiffStream) ||
+            ErrorResponse.TryHandle(response, Streams.ErrorStream) ||
+            OrderResponse.TryHandle(response, Streams.OrdersStream) ||
+            PrivateOrderResponse.TryHandle(response, Streams.PrivateOrdersStream) ||
+            PrivateTradeResponse.TryHandle(response, Streams.PrivateTickerStream) ||
+            HeartbeatResponse.TryHandle(response, Streams.HeartbeatStream) ||
+            ReconnectionRequest.TryHandle(response, Streams.ReconnectionRequestStream);
     }
 }

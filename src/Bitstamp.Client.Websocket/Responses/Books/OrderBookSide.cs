@@ -1,12 +1,11 @@
-﻿namespace Bitstamp.Client.Websocket.Responses.Books
+﻿namespace Bitstamp.Client.Websocket.Responses.Books;
+
+/// <summary>
+/// Order book side
+/// </summary>
+public enum OrderBookSide
 {
-    /// <summary>
-    /// Order book side
-    /// </summary>
-    public enum OrderBookSide
-    {
-        Undefined,
-        Bid,
-        Ask
-    }
+    Undefined,
+    Bid,
+    Ask
 }

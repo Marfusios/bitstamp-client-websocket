@@ -4,38 +4,27 @@ using Bitstamp.Client.Websocket.Json;
 using Bitstamp.Client.Websocket.Messages;
 using Newtonsoft.Json.Linq;
 
-namespace Bitstamp.Client.Websocket.Responses.Books
+namespace Bitstamp.Client.Websocket.Responses.Books;
+
+/// <summary>
+/// Diff order book response L2 - full order book
+/// </summary>
+public class OrderBookDiffResponse : SymbolResponse
 {
     /// <summary>
-    /// Diff order book response L2 - full order book
+    /// Order book diff data
     /// </summary>
-    public class OrderBookDiffResponse : ResponseBase
+    public OrderBookDiff Data { get; set; }
+
+    internal static bool TryHandle(JObject response, ISubject<OrderBookDiffResponse> subject)
     {
-        /// <summary>
-        /// Order book diff event type
-        /// </summary>
-        public override MessageType Event => MessageType.OrderBookDiff;
+        if (!response.IsForChannel(ChannelPrefixes.DiffOrderBook))
+            return false;
 
-        /// <summary>
-        /// Order book diff data
-        /// </summary>
-        public OrderBookDiff Data { get; set; }
+        var parsed = response.ToObject<OrderBookDiffResponse>(BitstampJsonSerializer.Serializer);
 
-        internal static bool TryHandle(JObject response, ISubject<OrderBookDiffResponse> subject)
-        {
-            var channelName = response?["channel"];
-            if (channelName == null || !channelName.Value<string>().StartsWith("diff_order_book"))
-                return false;
-
-            var parsed = response?.ToObject<OrderBookDiffResponse>(BitstampJsonSerializer.Serializer);
-
-            if (parsed != null)
-            {
-                parsed.Symbol = channelName.Value<string>().Split('_').LastOrDefault();
-                subject.OnNext(parsed);
-            }
-
-            return true;
-        }
+        parsed?.ParseSymbolFromChannel();
+        subject.OnNext(parsed);
+        return true;
     }
 }

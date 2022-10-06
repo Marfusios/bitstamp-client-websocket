@@ -1,46 +1,38 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Bitstamp.Client.Websocket.Channels;
 using Bitstamp.Client.Websocket.Client;
-using Bitstamp.Client.Websocket.Communicator;
 using Bitstamp.Client.Websocket.Requests;
 using Bitstamp.Client.Websocket.Responses;
+using Microsoft.Extensions.Logging.Abstractions;
+using Websocket.Client;
 using Xunit;
 
-namespace Bitstamp.Client.Websocket.Tests.Integration
+namespace Bitstamp.Client.Websocket.Tests.Integration;
+
+public class BitstampWebsocketClientTests
 {
-    public class BitstampWebsocketClientTests
+    [Fact]
+    public async Task ConnectTest()
     {
-        private static readonly string API_KEY = "your_api_key";
-        private static readonly string API_SECRET = "";
+        var url = BitstampValues.ApiWebsocketUrl;
+        using var apiClient = new WebsocketClient(url);
+        HeartbeatResponse received = null;
+        var receivedEvent = new ManualResetEvent(false);
 
-        [Fact]
-        public async Task ConnectTest()
+        using var client = new BitstampWebsocketClient(NullLogger.Instance, apiClient);
+        client.Streams.HeartbeatStream.Subscribe(pong =>
         {
-            var url = BitstampValues.ApiWebsocketUrl;
-            using (var communicator = new BitstampWebsocketCommunicator(url))
-            {
-                HeartbeatResponse received = null;
-                var receivedEvent = new ManualResetEvent(false);
+            received = pong;
+            receivedEvent.Set();
+        });
 
-                using (var client = new BitstampWebsocketClient(communicator))
-                {
-                    client.Streams.HeartbeatStream.Subscribe(pong =>
-                    {
-                        received = pong;
-                        receivedEvent.Set();
-                    });
+        await apiClient.Start();
 
-                    await communicator.Start();
+        client.Send(new HeartbeatRequest());
 
-                    client.Send(new SubscribeRequest("btcusd", Channel.Heartbeat));
+        receivedEvent.WaitOne(TimeSpan.FromSeconds(90));
 
-                    receivedEvent.WaitOne(TimeSpan.FromSeconds(90));
-
-                    Assert.NotNull(received);
-                }
-            }
-        }
+        Assert.NotNull(received);
     }
 }

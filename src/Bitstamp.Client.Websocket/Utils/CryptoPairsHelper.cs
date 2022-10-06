@@ -1,21 +1,20 @@
-﻿namespace Bitstamp.Client.Websocket.Utils
+﻿namespace Bitstamp.Client.Websocket.Utils;
+
+/// <summary>
+/// Helper class for working with pair identifications
+/// </summary>
+static class CryptoPairsHelper
 {
     /// <summary>
-    /// Helper class for working with pair identifications
+    /// Clean pair from any unnecessary characters and make lowercase
     /// </summary>
-    internal static class CryptoPairsHelper
+    public static string Clean(string pair)
     {
-        /// <summary>
-        /// Clean pair from any unnecessary characters and make lowercase
-        /// </summary>
-        public static string Clean(string pair)
-        {
-            return (pair ?? string.Empty)
-                .Trim()
-                .ToLower()
-                .Replace("/", "")
-                .Replace("-", "")
-                .Replace("\\", "");
-        }
+        return (pair ?? string.Empty)
+            .Trim()
+            .ToLower()
+            .Replace("/", "")
+            .Replace("-", "")
+            .Replace("\\", "");
     }
 }

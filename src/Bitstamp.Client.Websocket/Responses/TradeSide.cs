@@ -1,12 +1,11 @@
-﻿namespace Bitstamp.Client.Websocket.Responses
+﻿namespace Bitstamp.Client.Websocket.Responses;
+
+/// <summary>
+/// Trade side
+/// </summary>
+public enum TradeSide
 {
-    /// <summary>
-    /// Trade side
-    /// </summary>
-    public enum TradeSide
-    {
-        Undefined,
-        Buy,
-        Sell
-    }
+    Buy,
+    Sell,
+    Undefined = -1
 }
