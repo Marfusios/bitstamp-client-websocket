@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34601.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{360B18BD-653A-4824-9261-C88167EEBAD2}"
 EndProject
@@ -11,8 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test_integration", "test_in
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B771F515-0677-409B-BEC1-B84BC88E7392}"
 	ProjectSection(SolutionItems) = preProject
-		.travis.yml = .travis.yml
 		bitstamp-logo.png = bitstamp-logo.png
+		.github\workflows\dotnet-core-branches.yml = .github\workflows\dotnet-core-branches.yml
+		.github\workflows\dotnet-core.yml = .github\workflows\dotnet-core.yml
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection

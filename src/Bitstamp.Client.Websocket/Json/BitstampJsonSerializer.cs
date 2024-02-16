@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace Bitstamp.Client.Websocket.Json
@@ -35,7 +33,7 @@ namespace Bitstamp.Client.Websocket.Json
         /// <summary>
         /// Deserialize JSON string data by our configuration
         /// </summary>
-        public static T Deserialize<T>(string data)
+        public static T? Deserialize<T>(string data) where T : class
         {
             return JsonConvert.DeserializeObject<T>(data, Settings);
         }

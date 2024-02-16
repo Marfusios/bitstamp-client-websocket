@@ -1,12 +1,13 @@
 ﻿using System;
 using Bitstamp.Client.Websocket.Communicator;
 using Bitstamp.Client.Websocket.Json;
-using Bitstamp.Client.Websocket.Logging;
 using Bitstamp.Client.Websocket.Requests;
 using Bitstamp.Client.Websocket.Responses;
 using Bitstamp.Client.Websocket.Responses.Books;
 using Bitstamp.Client.Websocket.Responses.Orders;
 using Bitstamp.Client.Websocket.Validations;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json.Linq;
 using Websocket.Client;
 
@@ -19,8 +20,7 @@ namespace Bitstamp.Client.Websocket.Client
     /// </summary>
     public class BitstampWebsocketClient : IDisposable
     {
-        private static readonly ILog Log = LogProvider.GetCurrentClassLogger();
-
+        private readonly ILogger<BitstampWebsocketClient> _logger;
         private readonly IBitstampCommunicator _communicator;
         private readonly IDisposable _messageReceivedSubscription;
 
@@ -30,11 +30,13 @@ namespace Bitstamp.Client.Websocket.Client
         /// And `Streams` to handle messages.
         /// </summary>
         /// <param name="communicator">Live or backtest communicator</param>
-        public BitstampWebsocketClient(IBitstampCommunicator communicator)
+        /// <param name="logger">Optional logger instance</param>
+        public BitstampWebsocketClient(IBitstampCommunicator communicator, ILogger<BitstampWebsocketClient>? logger = null)
         {
             BitstampValidations.ValidateInput(communicator, nameof(communicator));
 
             _communicator = communicator;
+            _logger = logger ?? NullLogger<BitstampWebsocketClient>.Instance;
             _messageReceivedSubscription = _communicator.MessageReceived.Subscribe(HandleMessage);
         }
 
@@ -69,7 +71,7 @@ namespace Bitstamp.Client.Websocket.Client
             }
             catch (Exception e)
             {
-                Log.Error(e, L($"Exception while sending message '{request}'. Error: {e.Message}"));
+                _logger.LogError(e, L("Exception while sending message '{request}'. Error: {error}"), request, e.Message);
                 throw;
             }
         }
@@ -95,11 +97,11 @@ namespace Bitstamp.Client.Websocket.Client
                 handled = HandleRawMessage(messageSafe);
                 if (handled) return;
 
-                Log.Warn(L($"Unhandled response:  '{messageSafe}'"));
+                _logger.LogWarning(L("Unhandled response:  '{message}'"), messageSafe);
             }
             catch (Exception e)
             {
-                Log.Error(e, L("Exception while receiving message"));
+                _logger.LogError(e, L("Exception while receiving message, error: {error}"), e.Message);
             }
         }
 

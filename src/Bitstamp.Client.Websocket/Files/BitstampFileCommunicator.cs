@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Bitstamp.Client.Websocket.Communicator;
 using Websocket.Client;
-using Websocket.Client.Models;
 
 namespace Bitstamp.Client.Websocket.Files
 {
@@ -28,6 +27,7 @@ namespace Bitstamp.Client.Websocket.Files
 
         public TimeSpan? ReconnectTimeout { get; set; } = TimeSpan.FromSeconds(60);
         public TimeSpan? ErrorReconnectTimeout { get; set; } = TimeSpan.FromSeconds(60);
+        public TimeSpan? LostReconnectTimeout { get; set; } = TimeSpan.FromSeconds(60);
         public string Name { get; set; }
         public bool IsStarted { get; private set; }
         public bool IsRunning { get; private set; }
@@ -62,16 +62,19 @@ namespace Bitstamp.Client.Websocket.Files
             return Task.FromResult(true);
         }
 
-        public virtual void Send(string message)
+        public virtual bool Send(string message)
         {
+            return true;
         }
 
-        public void Send(byte[] message)
+        public bool Send(byte[] message)
         {
+            return true;
         }
 
-        public void Send(ArraySegment<byte> message)
+        public bool Send(ArraySegment<byte> message)
         {
+            return true;
         }
 
         public virtual Task SendInstant(string message)
@@ -82,6 +85,16 @@ namespace Bitstamp.Client.Websocket.Files
         public Task SendInstant(byte[] message)
         {
             return Task.CompletedTask;
+        }
+
+        public bool SendAsText(byte[] message)
+        {
+            return true;
+        }
+
+        public bool SendAsText(ArraySegment<byte> message)
+        {
+            return true;
         }
 
         public Task Reconnect()
@@ -136,7 +149,7 @@ namespace Bitstamp.Client.Websocket.Files
 
             while (sr.Peek() > 0)
             {
-                var nextChar = (char) sr.Read();
+                var nextChar = (char)sr.Read();
                 line.Append(nextChar);
                 if (nextChar == delimiter[matchIndex])
                 {

@@ -9,8 +9,10 @@ using Bitstamp.Client.Websocket.Channels;
 using Bitstamp.Client.Websocket.Client;
 using Bitstamp.Client.Websocket.Communicator;
 using Bitstamp.Client.Websocket.Requests;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
+using Serilog.Extensions.Logging;
 
 namespace Bitstamp.Client.Websocket.Sample
 {
@@ -18,12 +20,12 @@ namespace Bitstamp.Client.Websocket.Sample
     {
         private static readonly ManualResetEvent ExitEvent = new ManualResetEvent(false);
 
-        private static readonly string API_KEY = "your api key";
-        private static readonly string API_SECRET = "";
+        private static readonly string ApiKey = "your api key";
+        private static readonly string ApiSecret = "";
 
         private static async Task Main(string[] args)
         {
-            InitLogging();
+            var logger = InitLogging();
 
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainOnProcessExit;
             AssemblyLoadContext.Default.Unloading += DefaultOnUnloading;
@@ -40,17 +42,17 @@ namespace Bitstamp.Client.Websocket.Sample
 
 
             var url = BitstampValues.ApiWebsocketUrl;
-            using (var communicator = new BitstampWebsocketCommunicator(url))
+            using (var communicator = new BitstampWebsocketCommunicator(url, logger.CreateLogger<BitstampWebsocketCommunicator>()))
             {
                 communicator.Name = "Bitstamp-1";
 
-                using (var client = new BitstampWebsocketClient(communicator))
+                using (var client = new BitstampWebsocketClient(communicator, logger.CreateLogger<BitstampWebsocketClient>()))
                 {
                     SubscribeToStreams(client);
 
                     communicator.ReconnectionHappened.Subscribe(async type =>
                     {
-                        Log.Information($"Reconnection happened, type: {type.Type}, resubscribing..");
+                        Log.Information("Reconnection happened, type: {type}, resubscribing..", type.Type);
                         await SendSubscriptionRequests(client);
                     });
 
@@ -90,7 +92,7 @@ namespace Bitstamp.Client.Websocket.Sample
             {
                 Log.Information($"Subscribed to {x?.Symbol} {x?.Channel}");
             });
-            
+
             client.Streams.UnsubscriptionSucceededStream.Subscribe(x =>
             {
                 Log.Information($"Unsubscribed from {x?.Symbol} {x?.Channel}");
@@ -144,7 +146,7 @@ namespace Bitstamp.Client.Websocket.Sample
                                 $"({x.Data?.Bids?.Length}) ");
             });
 
-            
+
             client.Streams.HeartbeatStream.Subscribe(x =>
                 Log.Information($"Heartbeat received, product: {x?.Channel}, seq: {x?.Event}"));
 
@@ -154,15 +156,17 @@ namespace Bitstamp.Client.Websocket.Sample
             });
         }
 
-        private static void InitLogging()
+        private static SerilogLoggerFactory InitLogging()
         {
             var executingDir = Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);
             var logPath = Path.Combine(executingDir, "logs", "verbose.log");
-            Log.Logger = new LoggerConfiguration()
+            var logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .WriteTo.File(logPath, rollingInterval: RollingInterval.Day)
-                .WriteTo.ColoredConsole(LogEventLevel.Debug)
+                .WriteTo.Console(LogEventLevel.Debug)
                 .CreateLogger();
+            Log.Logger = logger;
+            return new SerilogLoggerFactory(logger);
         }
 
         private static void CurrentDomainOnProcessExit(object sender, EventArgs eventArgs)

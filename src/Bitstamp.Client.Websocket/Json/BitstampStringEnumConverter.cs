@@ -1,5 +1,4 @@
 ﻿using System;
-using Bitstamp.Client.Websocket.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -10,9 +9,7 @@ namespace Bitstamp.Client.Websocket.Json
     /// </summary>
     internal class BitstampStringEnumConverter : StringEnumConverter
     {
-        private static readonly ILog Log = LogProvider.GetCurrentClassLogger();
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue,
             JsonSerializer serializer)
         {
             try
@@ -30,7 +27,7 @@ namespace Bitstamp.Client.Websocket.Json
             }
             catch
             {
-                Log.Warn(
+                Console.WriteLine(
                     $"Can't parse enum, value: {reader.Value}, target type: {objectType}, using default '{existingValue}'");
                 return existingValue;
             }
