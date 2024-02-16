@@ -46,6 +46,11 @@ namespace Bitstamp.Client.Websocket.Client
         public BitstampClientStreams Streams { get; } = new BitstampClientStreams();
 
         /// <summary>
+        /// Expose logger for this client
+        /// </summary>
+        public ILogger<BitstampWebsocketClient> Logger => _logger;
+
+        /// <summary>
         /// Cleanup everything
         /// </summary>
         public void Dispose()
