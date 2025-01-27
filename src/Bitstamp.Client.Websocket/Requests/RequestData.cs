@@ -1,9 +1,12 @@
-﻿using Newtonsoft.Json;
-
-namespace Bitstamp.Client.Websocket.Requests
+﻿namespace Bitstamp.Client.Websocket.Requests
 {
-    public class RequestData
-    {
-        [JsonProperty("channel")] public string Channel { get; set; }
-    }
+	public class RequestData
+	{
+		public string Channel { get; set; }
+	}
+
+	public class PrivateRequestData : RequestData
+	{
+		public string Auth { get; set; }
+	}
 }

@@ -4,7 +4,9 @@ using Bitstamp.Client.Websocket.Json;
 using Bitstamp.Client.Websocket.Requests;
 using Bitstamp.Client.Websocket.Responses;
 using Bitstamp.Client.Websocket.Responses.Books;
+using Bitstamp.Client.Websocket.Responses.Error;
 using Bitstamp.Client.Websocket.Responses.Orders;
+using Bitstamp.Client.Websocket.Responses.Trades;
 using Bitstamp.Client.Websocket.Validations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -130,14 +132,16 @@ namespace Bitstamp.Client.Websocket.Client
             return
                 SubscriptionSucceeded.TryHandle(response, Streams.SubscriptionSucceededSubject) ||
                 UnsubscriptionSucceeded.TryHandle(response, Streams.UnsubscriptionSucceededSubject) ||
-                //OrderBookSnapshotResponse.TryHandle(response, Streams.OrderBookSnapshotSubject) ||
-                Ticker.TryHandle(response, Streams.TickerSubject) ||
+				TradeResponse.TryHandle(response, Streams.TickerSubject) ||
                 OrderBookResponse.TryHandle(response, Streams.OrderBookSubject) ||
                 OrderBookDetailResponse.TryHandle(response, Streams.OrderBookDetailSubject) ||
                 OrderBookDiffResponse.TryHandle(response, Streams.OrderBookDiffSubject) ||
                 ErrorResponse.TryHandle(response, Streams.ErrorSubject) ||
                 OrderResponse.TryHandle(response, Streams.OrdersSubject) ||
-                false;
+				PrivateOrderResponse.TryHandle(response, Streams.PrivateOrdersSubject) ||
+				PrivateTradeResponse.TryHandle(response, Streams.PrivateTickerSubject) ||
+				HeartbeatResponse.TryHandle(response, Streams.HeartbeatSubject) ||
+				ReconnectionRequest.TryHandle(response, Streams.ReconnectionRequestSubject);
         }
     }
 }

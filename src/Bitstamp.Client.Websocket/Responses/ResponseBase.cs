@@ -1,15 +1,12 @@
-﻿using System;
-using Bitstamp.Client.Websocket.Messages;
-using Newtonsoft.Json;
+﻿using Bitstamp.Client.Websocket.Messages;
 
 namespace Bitstamp.Client.Websocket.Responses
 {
-    /// <summary>
-    /// Message which is used as base for every request and response
-    /// </summary>
-    public abstract class ResponseBase : MessageBase
-    {
-        public string Channel { get; set; }
-        public string Symbol { get; set; }
-    }
+	/// <summary>
+	/// Message which is used as base for every response
+	/// </summary>
+	public abstract class ResponseBase : MessageBase
+	{
+		public string Channel { get; set; }
+	}
 }

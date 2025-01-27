@@ -6,35 +6,26 @@ using Newtonsoft.Json.Linq;
 
 namespace Bitstamp.Client.Websocket.Responses.Books
 {
-    /// <summary>
-    /// Full order book response L2 - first 100 levels on both sides
-    /// </summary>
-    public class OrderBookResponse : ResponseBase
-    {
-        /// <summary>
-        /// Order book event type
-        /// </summary>
-        public override MessageType Event => MessageType.OrderBook;
+	/// <summary>
+	/// Full order book response L2 - first 100 levels on both sides
+	/// </summary>
+	public class OrderBookResponse : SymbolResponse
+	{
+		/// <summary>
+		/// Order book data
+		/// </summary>
+		public OrderBook Data { get; set; }
 
-        /// <summary>
-        /// Order book data
-        /// </summary>
-        public OrderBook Data { get; set; }
+		internal static bool TryHandle(JObject response, ISubject<OrderBookResponse> subject)
+		{
+			if (!response.IsForChannel(ChannelPrefixes.OrderBook))
+				return false;
 
-        internal static bool TryHandle(JObject response, ISubject<OrderBookResponse> subject)
-        {
-            var channelName = response?["channel"];
-            if (channelName == null || !channelName.Value<string>().StartsWith("order_book")) 
-                return false;
+			var parsed = response.ToObject<OrderBookResponse>(BitstampJsonSerializer.Serializer)!;
 
-            var parsed = response?.ToObject<OrderBookResponse>(BitstampJsonSerializer.Serializer);
-            if (parsed != null)
-            {
-                parsed.Symbol = channelName.Value<string>().Split('_').LastOrDefault();
-                subject.OnNext(parsed);
-            }
-
-            return true;
-        }
-    }
+			parsed.ParseSymbolFromChannel();
+			subject.OnNext(parsed);
+			return true;
+		}
+	}
 }
