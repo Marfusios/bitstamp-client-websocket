@@ -4,11 +4,11 @@ using Bitstamp.Client.Websocket.Messages;
 namespace Bitstamp.Client.Websocket.Requests
 {
 	/// <summary>
-	/// Subscribe request
+	/// Private subscribe request
 	/// </summary>
-	public class SubscribeRequest : DataRequest
+	public class PrivateSubscribeRequest : PrivateDataRequest
 	{
-		public SubscribeRequest(string pair, Channel channel) : base(pair, channel) { }
+		public PrivateSubscribeRequest(string pair, Channel channel) : base(pair, channel) { }
 
 		/// <inheritdoc />
 		public override string Event => ControlEventNames.Subscribe;

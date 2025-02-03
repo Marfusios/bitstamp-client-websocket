@@ -4,12 +4,22 @@ using Newtonsoft.Json;
 
 namespace Bitstamp.Client.Websocket.Responses.Orders
 {
-	public class Order
+	public class PrivateOrder
 	{
 		/// <summary>
 		/// Order ID
 		/// </summary>
 		public long Id { get; set; }
+
+		/// <summary>
+		/// Order ID represented in string format
+		/// </summary>
+		public string IdStr { get; set; }
+
+		/// <summary>
+		/// Client order ID (if used when placing order)
+		/// </summary>
+		public string ClientOrderId { get; set; }
 
 		/// <summary>
 		/// Order amount
@@ -32,7 +42,7 @@ namespace Bitstamp.Client.Websocket.Responses.Orders
 		public string PriceStr { get; set; }
 
 		/// <summary>
-		/// Order type (0 - buy; 1 - sell)
+		/// Order type (0 - buy, 1 - sell)
 		/// </summary>
 		public int OrderType { get; set; }
 

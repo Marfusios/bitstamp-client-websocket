@@ -7,50 +7,62 @@ using Newtonsoft.Json.Converters;
 namespace Bitstamp.Client.Websocket.Json
 {
     internal class UnixDateTimeSecondsConverter : DateTimeConverterBase
-    {
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            var subtracted = ((DateTime) value).Subtract(UnixTime.UnixBase);
-            writer.WriteRawValue(subtracted.TotalSeconds.ToString(CultureInfo.InvariantCulture));
-        }
+	{
+		public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+		{
+			if (value == null)
+			{
+				writer.WriteNull();
+				return;
+			}
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
-            JsonSerializer serializer)
-        {
-            if (reader.Value == null) 
-                return null;
+			var subtracted = ((DateTime)value).Subtract(UnixTime.UnixBase);
+			writer.WriteRawValue(subtracted.TotalSeconds.ToString(CultureInfo.InvariantCulture));
+		}
 
-            if (reader.Value is string valueS && long.TryParse(valueS, out var valueSl))
-                return UnixTime.ConvertToTimeFromSeconds(valueSl);
+		public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue,
+			JsonSerializer serializer)
+		{
+			if (reader.Value == null)
+				return null;
 
-            if (reader.Value is long valueL)
-                return UnixTime.ConvertToTimeFromSeconds(valueL);
+			if (reader.Value is string valueS && long.TryParse(valueS, out var valueSl))
+				return UnixTime.ConvertToTimeFromSeconds(valueSl);
 
-            return null;
-        }
-    }
+			if (reader.Value is long valueL)
+				return UnixTime.ConvertToTimeFromSeconds(valueL);
+
+			return null;
+		}
+	}
 
     internal class UnixDateTimeMillisecondsConverter : DateTimeConverterBase
-    {
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            var subtracted = ((DateTime)value).Subtract(UnixTime.UnixBase);
-            writer.WriteRawValue(subtracted.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
-        }
+	{
+		public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+		{
+			if (value == null)
+			{
+				writer.WriteNull();
+				return;
+			}
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
-            JsonSerializer serializer)
-        {
-            if (reader.Value == null) 
-                return null;
+			var subtracted = ((DateTime)value).Subtract(UnixTime.UnixBase);
+			writer.WriteRawValue(subtracted.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
+		}
 
-            if (reader.Value is string valueS && long.TryParse(valueS, out var valueSl))
-                return UnixTime.ConvertToTimeFromMilliseconds(valueSl/1000);
+		public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue,
+			JsonSerializer serializer)
+		{
+			if (reader.Value == null)
+				return null;
 
-            if (reader.Value is long valueL)
-                return UnixTime.ConvertToTimeFromMilliseconds(valueL/1000);
+			if (reader.Value is string valueS && long.TryParse(valueS, out var valueSl))
+				return UnixTime.ConvertToTimeFromMilliseconds(valueSl / 1000);
 
-            return null;
-        }
-    }
+			if (reader.Value is long valueL)
+				return UnixTime.ConvertToTimeFromMilliseconds(valueL / 1000);
+
+			return null;
+		}
+	}
 }

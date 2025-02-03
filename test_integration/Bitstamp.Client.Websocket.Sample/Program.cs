@@ -86,7 +86,7 @@ namespace Bitstamp.Client.Websocket.Sample
         private static void SubscribeToStreams(BitstampWebsocketClient client)
         {
             client.Streams.ErrorStream.Subscribe(x =>
-                Log.Warning($"Error received, message: {x?.Message}"));
+                Log.Warning($"Error received, message: {x?.Data.Message}"));
 
             client.Streams.SubscriptionSucceededStream.Subscribe(x =>
             {

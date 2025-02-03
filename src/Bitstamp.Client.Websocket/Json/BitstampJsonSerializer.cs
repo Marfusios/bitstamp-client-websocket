@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 namespace Bitstamp.Client.Websocket.Json
@@ -22,6 +24,13 @@ namespace Bitstamp.Client.Websocket.Json
             ContractResolver = new DefaultContractResolver
             {
                 NamingStrategy = new SnakeCaseNamingStrategy()
+			},
+			Converters = new List<JsonConverter>
+			{
+				new StringEnumConverter
+				{
+					NamingStrategy = new SnakeCaseNamingStrategy()
+				}
             }
         };
 
