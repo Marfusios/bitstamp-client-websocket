@@ -1,5 +1,6 @@
 ﻿using System;
 using Bitstamp.Client.Websocket.Communicator;
+using Bitstamp.Client.Websocket.Exceptions;
 using Bitstamp.Client.Websocket.Json;
 using Bitstamp.Client.Websocket.Requests;
 using Bitstamp.Client.Websocket.Responses;
@@ -123,25 +124,32 @@ namespace Bitstamp.Client.Websocket.Client
 
         private bool HandleObjectMessage(string msg)
         {
-            var response = BitstampJsonSerializer.Deserialize<JObject>(msg);
+            try
+            {
+                var response = BitstampJsonSerializer.Deserialize<JObject>(msg);
 
-            // ********************
-            // ADD OBJECT HANDLERS BELOW
-            // ********************
+                // ********************
+                // ADD OBJECT HANDLERS BELOW
+                // ********************
 
-            return
-                SubscriptionSucceeded.TryHandle(response, Streams.SubscriptionSucceededSubject) ||
-                UnsubscriptionSucceeded.TryHandle(response, Streams.UnsubscriptionSucceededSubject) ||
-				TradeResponse.TryHandle(response, Streams.TickerSubject) ||
-                OrderBookResponse.TryHandle(response, Streams.OrderBookSubject) ||
-                OrderBookDetailResponse.TryHandle(response, Streams.OrderBookDetailSubject) ||
-                OrderBookDiffResponse.TryHandle(response, Streams.OrderBookDiffSubject) ||
-                ErrorResponse.TryHandle(response, Streams.ErrorSubject) ||
-                OrderResponse.TryHandle(response, Streams.OrdersSubject) ||
-				PrivateOrderResponse.TryHandle(response, Streams.PrivateOrdersSubject) ||
-				PrivateTradeResponse.TryHandle(response, Streams.PrivateTickerSubject) ||
-				HeartbeatResponse.TryHandle(response, Streams.HeartbeatSubject) ||
-				ReconnectionRequest.TryHandle(response, Streams.ReconnectionRequestSubject);
+                return
+                    SubscriptionSucceeded.TryHandle(response, Streams.SubscriptionSucceededSubject) ||
+                    UnsubscriptionSucceeded.TryHandle(response, Streams.UnsubscriptionSucceededSubject) ||
+                    TradeResponse.TryHandle(response, Streams.TickerSubject) ||
+                    OrderBookResponse.TryHandle(response, Streams.OrderBookSubject) ||
+                    OrderBookDetailResponse.TryHandle(response, Streams.OrderBookDetailSubject) ||
+                    OrderBookDiffResponse.TryHandle(response, Streams.OrderBookDiffSubject) ||
+                    ErrorResponse.TryHandle(response, Streams.ErrorSubject) ||
+                    OrderResponse.TryHandle(response, Streams.OrdersSubject) ||
+                    PrivateOrderResponse.TryHandle(response, Streams.PrivateOrdersSubject) ||
+                    PrivateTradeResponse.TryHandle(response, Streams.PrivateTickerSubject) ||
+                    HeartbeatResponse.TryHandle(response, Streams.HeartbeatSubject) ||
+                    ReconnectionRequest.TryHandle(response, Streams.ReconnectionRequestSubject);
+            }
+            catch (Exception exception)
+            {
+                throw new BitstampException($"Error handling JSON: {msg}", exception);
+            }
         }
     }
 }
