@@ -23,7 +23,7 @@ namespace Bitstamp.Client.Websocket.Client
     /// </summary>
     public class BitstampWebsocketClient : IDisposable
     {
-        private readonly ILogger<BitstampWebsocketClient> _logger;
+        private readonly ILogger _logger;
         private readonly IBitstampCommunicator _communicator;
         private readonly IDisposable _messageReceivedSubscription;
 
@@ -34,12 +34,12 @@ namespace Bitstamp.Client.Websocket.Client
         /// </summary>
         /// <param name="communicator">Live or backtest communicator</param>
         /// <param name="logger">Optional logger instance</param>
-        public BitstampWebsocketClient(IBitstampCommunicator communicator, ILogger<BitstampWebsocketClient>? logger = null)
+        public BitstampWebsocketClient(IBitstampCommunicator communicator, ILogger? logger = null)
         {
             BitstampValidations.ValidateInput(communicator, nameof(communicator));
 
             _communicator = communicator;
-            _logger = logger ?? NullLogger<BitstampWebsocketClient>.Instance;
+            _logger = logger ?? NullLogger.Instance;
             _messageReceivedSubscription = _communicator.MessageReceived.Subscribe(HandleMessage);
         }
 
@@ -51,7 +51,7 @@ namespace Bitstamp.Client.Websocket.Client
         /// <summary>
         /// Expose logger for this client
         /// </summary>
-        public ILogger<BitstampWebsocketClient> Logger => _logger;
+        public ILogger Logger => _logger;
 
         /// <summary>
         /// Cleanup everything
