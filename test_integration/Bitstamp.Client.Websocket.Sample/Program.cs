@@ -18,10 +18,10 @@ namespace Bitstamp.Client.Websocket.Sample
 {
     internal class Program
     {
-        private static readonly ManualResetEvent ExitEvent = new ManualResetEvent(false);
+        private static readonly ManualResetEvent _exitEvent = new ManualResetEvent(false);
 
-        private static readonly string ApiKey = "your api key";
-        private static readonly string ApiSecret = "";
+        private static readonly string _apiKey = "your api key";
+        private static readonly string _apiSecret = "";
 
         private static async Task Main(string[] args)
         {
@@ -58,7 +58,7 @@ namespace Bitstamp.Client.Websocket.Sample
 
                     await communicator.Start();
 
-                    ExitEvent.WaitOne();
+                    _exitEvent.WaitOne();
                 }
             }
 
@@ -172,20 +172,20 @@ namespace Bitstamp.Client.Websocket.Sample
         private static void CurrentDomainOnProcessExit(object sender, EventArgs eventArgs)
         {
             Log.Warning("Exiting process");
-            ExitEvent.Set();
+            _exitEvent.Set();
         }
 
         private static void DefaultOnUnloading(AssemblyLoadContext assemblyLoadContext)
         {
             Log.Warning("Unloading process");
-            ExitEvent.Set();
+            _exitEvent.Set();
         }
 
         private static void ConsoleOnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
             Log.Warning("Canceling process");
             e.Cancel = true;
-            ExitEvent.Set();
+            _exitEvent.Set();
         }
     }
 }
