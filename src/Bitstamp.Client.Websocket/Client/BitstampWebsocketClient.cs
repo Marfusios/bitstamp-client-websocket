@@ -86,7 +86,7 @@ namespace Bitstamp.Client.Websocket.Client
 
         private string L(string msg)
         {
-            return $"[BITSTAMP WEBSOCKET CLIENT] {msg}";
+            return $"[{_communicator.Name ?? "BITSTAMP"} WEBSOCKET CLIENT] {msg}";
         }
 
         private void HandleMessage(ResponseMessage message)
