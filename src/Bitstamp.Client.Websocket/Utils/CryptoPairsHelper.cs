@@ -12,7 +12,7 @@
         {
             return (pair ?? string.Empty)
                 .Trim()
-                .ToLower()
+                .ToLowerInvariant()
                 .Replace("/", "")
                 .Replace("-", "")
                 .Replace("\\", "");

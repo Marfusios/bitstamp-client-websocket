@@ -20,9 +20,6 @@ namespace Bitstamp.Client.Websocket.Sample
     {
         private static readonly ManualResetEvent _exitEvent = new ManualResetEvent(false);
 
-        private static readonly string _apiKey = "your api key";
-        private static readonly string _apiSecret = "";
-
         private static async Task Main(string[] args)
         {
             var logger = InitLogging();

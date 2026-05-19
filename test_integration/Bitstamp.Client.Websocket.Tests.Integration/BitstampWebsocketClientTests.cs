@@ -12,9 +12,6 @@ namespace Bitstamp.Client.Websocket.Tests.Integration
 {
     public class BitstampWebsocketClientTests
     {
-        private static readonly string ApiKey = "your_api_key";
-        private static readonly string ApiSecret = "";
-
         [Fact]
         public async Task ConnectTest()
         {

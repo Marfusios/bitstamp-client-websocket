@@ -1,13 +1,12 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using Bitmex.Client.Websocket.Sample.WinForms.Presenters;
-using Bitmex.Client.Websocket.Sample.WinForms.Views;
+using Bitstamp.Client.Websocket.Sample.WinForms.Presenters;
+using Bitstamp.Client.Websocket.Sample.WinForms.Views;
 using Serilog;
-using Serilog.Events;
 
-namespace Bitmex.Client.Websocket.Sample.WinForms
+namespace Bitstamp.Client.Websocket.Sample.WinForms
 {
     static class Program
     {
@@ -37,8 +36,6 @@ namespace Bitmex.Client.Websocket.Sample.WinForms
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .WriteTo.File(logPath, rollingInterval: RollingInterval.Day)
-                //.WriteTo.Console(LogEventLevel.Information)
-                .WriteTo.Debug(LogEventLevel.Debug)
                 .CreateLogger();
         }
     }
